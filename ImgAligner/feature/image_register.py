@@ -1,32 +1,13 @@
-import os
 import cv2
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import tifffile
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
-import tifffile as tf
-from pathlib import Path
-import sys
-
 from tqdm import tqdm
-from skimage.registration import phase_cross_correlation
 from skimage.transform import PiecewiseAffineTransform, warp
-from scipy.ndimage import fourier_shift, shift
 from scipy.interpolate import Rbf
 from sklearn.neighbors import NearestNeighbors
-
-# --- Add src folder to sys.path ---
-parent_dir = os.path.abspath(os.path.join(os.getcwd(), "src/"))
-sys.path.append(parent_dir)
-
-# --- Custom modules ---
+import numpy as np
 from plotting import *
-from reading import *
-from processing import *
 from image_transform import *
-from image_register import *
+from feature_detector import *
 
 def compute_homography_and_warp(img1, img2, src_pts, dst_pts, matches, ransac_thresh=3.0):
     """
@@ -53,7 +34,6 @@ def compute_homography_and_warp(img1, img2, src_pts, dst_pts, matches, ransac_th
 
     return H, img2_aligned, inlier_matches
 
-import numpy as np
 
 def adjust_homography_scale(H, scale):
     """

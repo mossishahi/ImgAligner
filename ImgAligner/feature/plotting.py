@@ -1,18 +1,7 @@
-import os
+
 import cv2
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import tifffile
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
-
-from tqdm import tqdm
-from skimage.registration import phase_cross_correlation
-from skimage.transform import PiecewiseAffineTransform, warp
-from scipy.ndimage import fourier_shift, shift
-from scipy.interpolate import Rbf
-from sklearn.neighbors import NearestNeighbors
 
 def plot_inlier_matches(img1, img2, kp1, kp2, matches, title="Inlier Matches", figsize=(12, 8)):
     """
@@ -121,9 +110,6 @@ def plot_match_consistency(tile_roi1, tile_roi2, kp1, kp2, consistent_matches, i
     plt.show()
 
 
-    import matplotlib.pyplot as plt
-import numpy as np
-
 def plot_point_mappings(pts1, pts2, background_img1=None, background_img2=None, title="Point correspondences", alpha1=0.8, alpha2=0.8):
     plt.figure(figsize=(10, 10))
 
@@ -153,7 +139,6 @@ def plot_point_mappings(pts1, pts2, background_img1=None, background_img2=None, 
     #plt.gca().invert_yaxis()
     plt.show()
 
-import matplotlib.pyplot as plt
 
 def plot_overlay(tile_roi1, tile_roi2, pts=None, figsize=(10, 10), 
                  title="Overlay: Reference (Green) & Registered (Magenta)"):

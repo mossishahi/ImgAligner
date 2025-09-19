@@ -1,32 +1,5 @@
-import os
-import cv2
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import tifffile
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
-import tifffile as tf
-from pathlib import Path
-import sys
-
-from tqdm import tqdm
-from skimage.registration import phase_cross_correlation
-from skimage.transform import PiecewiseAffineTransform, warp
-from scipy.ndimage import fourier_shift, shift
-from scipy.interpolate import Rbf
-from sklearn.neighbors import NearestNeighbors
-
-# --- Add src folder to sys.path ---
-parent_dir = os.path.abspath(os.path.join(os.getcwd(), "src/"))
-sys.path.append(parent_dir)
-
-# --- Custom modules ---
-from plotting import *
-from reading import *
-from processing import *
-from image_transform import *
-from image_register import *
+import cv2
 
 
 def merge_channels_to_rgb(channels):

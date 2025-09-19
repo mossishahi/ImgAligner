@@ -1,34 +1,6 @@
-# --- Standard library ---
-import os
-import sys
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
-
-# --- Third-party libraries ---
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import cv2
 import tifffile as tf
-from tqdm import tqdm
-from skimage.registration import phase_cross_correlation
-from skimage.transform import PiecewiseAffineTransform, warp
-from scipy.ndimage import fourier_shift, shift
-from scipy.interpolate import Rbf
-from sklearn.neighbors import NearestNeighbors
-
-# --- Add src folder to sys.path ---
-parent_dir = os.path.abspath(os.path.join(os.getcwd(), "src/"))
-sys.path.append(parent_dir)
-
-# --- Custom modules ---
-from plotting import *
-from reading import *
-from processing import *
-from image_transform import *
-from image_register import *
-
-
+from pathlib import Path
 
 def load_round_channels(base_path, round_number, n_channels=3, ch_prefix='ch', file_suffix='.tif'):
     """
