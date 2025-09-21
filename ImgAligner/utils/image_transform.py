@@ -38,9 +38,12 @@ def normalize_uint16_to_uint8(rgb_img):
     Returns:
     - rgb_img_uint8: np.array, normalized uint8 RGB image
     """
-    return cv2.convertScaleAbs(rgb_img, alpha=(255.0 / 65535.0))
+    return cv2.convertScaleAbs(rgb_img.astype(np.float32), alpha=(255.0 / 65535.0))
 
 def normalize_and_clahe(tile,clipLimit=4.0,tileGridSize=(8,8)):
     tile = normalize_uint16_to_uint8(tile)
     clahe = cv2.createCLAHE(clipLimit=clipLimit, tileGridSize=tileGridSize)
     return cv2.merge([clahe.apply(c) for c in cv2.split(tile)])
+
+
+    

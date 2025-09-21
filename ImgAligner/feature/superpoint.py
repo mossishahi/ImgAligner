@@ -2,9 +2,8 @@ import torch
 import torch.nn as nn
 import cv2
 import numpy as np
-from .feature_detector import simple_nms, remove_borders, top_k_keypoints, sample_descriptors
 
-SUPERPOINT_PATH = '/ictstr01/home/icb/mostafa.shahhosseini/code/repos/ImgAligner/ImgAligner/models/superpoint_v1.pth'
+SUPERPOINT_PATH = '/home/icb/mostafa.shahhosseini/models/superpoint/superpoint_v1.pth'
 
 def match_features(kp1, des1, kp2, des2, ratio_thresh=0.8):
     """Match features using BF + Lowe's ratio test"""

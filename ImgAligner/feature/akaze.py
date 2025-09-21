@@ -4,7 +4,6 @@ import numpy as np
 def akaze_feature_matching(tile_roi1, tile_roi2, ratio_thresh=0.8, ransac_thresh=500.0, verbose=True):
     """
     Perform AKAZE feature detection and matching between two images, then filter matches by Lowe's ratio test and RANSAC.
-    
     Args:
         tile_roi1 (np.ndarray): First grayscale image (reference).
         tile_roi2 (np.ndarray): Second grayscale image (to match).
