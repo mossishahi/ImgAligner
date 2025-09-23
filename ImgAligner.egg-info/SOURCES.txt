@@ -1,0 +1,7 @@
+README.md
+setup.py
+ImgAligner/__init__.py
+ImgAligner.egg-info/PKG-INFO
+ImgAligner.egg-info/SOURCES.txt
+ImgAligner.egg-info/dependency_links.txt
+ImgAligner.egg-info/top_level.txt

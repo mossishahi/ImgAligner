@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: ImgAligner
+Version: 0.1.0
+Summary: ImgAligner
+Home-page: https://github.com/mossishahi/ImgAligner
+Author: Mostafa Shahhoseini, Sergio Marco Salas
+Author-email: shahhosseini.94@gmail.com
+Dynamic: author
+Dynamic: author-email
+Dynamic: home-page
+Dynamic: summary
