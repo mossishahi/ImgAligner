@@ -87,6 +87,7 @@ def matches_to_dataframe(all_matches):
                 "scale": match_dict["scale"],
                 "detector": match_dict["detector"],
                 "channel": match_dict["channel"],
+                "tile_size": match_dict["tile_size"],
                 "roi_x": match_dict["roi"][0],
                 "roi_y": match_dict["roi"][1],
                 "roi_size": match_dict["roi"][2],

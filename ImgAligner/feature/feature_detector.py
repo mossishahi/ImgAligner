@@ -45,7 +45,7 @@ def extract_matches_over_image(
     img1_enh, img2_enh,
     img1_chs, img2_chs,
     H_fullres,
-    tile_size=4000,
+    tile_sizes=[4000],
     stride=None,
     scales_list=[[1.0]],                 # list of lists of scales
     feature_extractors_list=[["ORB","AKAZE"]],  # list of lists of extractors
@@ -63,43 +63,44 @@ def extract_matches_over_image(
     Returns:
         all_matches: list of dicts (each contains coordinates + metadata for matches)
     """
-
-    if stride is None:
-        stride = tile_size // 2  # default = 50% overlap
-
     h, w = img1_enh.shape[:2]
     all_matches = []
 
     print(f"Tiling image of size {w}x{h} with tile size {tile_size} and stride {stride}...")
+    for tile_size in tile_sizes:
+        if stride is None or stride>tile_size:
+            print(f"Stride is None or greater than tile size, setting stride to {tile_size // 2}")
+            stride = tile_size // 2
+            
+        for y0 in tqdm(range(0, h - tile_size + 1, stride)):
+            for x0 in range(0, w - tile_size + 1, stride):
+                print(f"\n==> Processing tile at ({x0}, {y0})")
 
-    for y0 in tqdm(range(0, h - tile_size + 1, stride)):
-        for x0 in range(0, w - tile_size + 1, stride):
-            print(f"\n==> Processing tile at ({x0}, {y0})")
+                # Loop over parameter combinations
+                for scales in scales_list:
+                    for feature_extractors in feature_extractors_list:
+                        for clahe_params in clahe_params_list:
+                            try:
+                                matches, roi1, roi2 = get_global_matches_for_tile(
+                                    x0=x0, y0=y0, tile_size=tile_size,
+                                    img1_enh=img1_enh, img2_enh=img2_enh,
+                                    img1_chs=img1_chs, img2_chs=img2_chs,
+                                    H_fullres=H_fullres,
+                                    scales=scales,
+                                    feature_extractors=feature_extractors,
+                                    n_neighbors=n_neighbors,
+                                    error_threshold=error_threshold,
+                                    min_matches=min_matches,
+                                    clahe_params=clahe_params
+                                )
 
-            # Loop over parameter combinations
-            for scales in scales_list:
-                for feature_extractors in feature_extractors_list:
-                    for clahe_params in clahe_params_list:
-                        try:
-                            matches, roi1, roi2 = get_global_matches_for_tile(
-                                x0=x0, y0=y0, tile_size=tile_size,
-                                img1_enh=img1_enh, img2_enh=img2_enh,
-                                img1_chs=img1_chs, img2_chs=img2_chs,
-                                H_fullres=H_fullres,
-                                scales=scales,
-                                feature_extractors=feature_extractors,
-                                n_neighbors=n_neighbors,
-                                error_threshold=error_threshold,
-                                min_matches=min_matches,
-                                clahe_params=clahe_params
-                            )
+                                if matches:
+                                    all_matches.extend(matches)
 
-                            if matches:
-                                all_matches.extend(matches)
-
-                        except Exception as e:
-                            print(f"[Warning] Tile ({x0}, {y0}) failed for params "
-                                  f"{scales}, {feature_extractors}, {clahe_params}: {e}")
+                            except Exception as e:
+                                print(f"[Warning] Tile ({x0}, {y0}) failed for params "
+                                    f"{scales}, {feature_extractors}, {clahe_params}: {e}")
+                                continue
 
     print(f"\n✅ Total match sets collected: {len(all_matches)}")
 
@@ -137,7 +138,6 @@ def detect_features_in_pair(
         if scale <= 0:
             continue
 
-        # Downsample ROIs
         roi1_scaled = cv2.resize(roi1, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
         roi2_scaled = cv2.resize(roi2, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
 
@@ -150,7 +150,10 @@ def detect_features_in_pair(
                     results = orb_feature_matching(roi1_gray, roi2_gray)
                 elif extractor.upper() == "AKAZE":
                     results = akaze_feature_matching(roi1_gray, roi2_gray)
+                elif extractor.upper() == "BRISK":
+                    results = brisk_feature_matching(roi1_gray, roi2_gray)
                 else:
+                    print(f"[Warning] {extractor} matching failed")
                     continue
 
                 # Normalize return signature
@@ -262,19 +265,19 @@ def get_global_matches_for_tile(
     tile_roi1 = apply_clahe_to_img(tile_roi1)
     tile_roi2 = apply_clahe_to_img(tile_roi2)
 
-    print(tile_roi1.shape)
     all_matches = []
 
     # Detect on merged ROI
-    all_matches.extend(
-        detect_features_in_pair(
-            tile_roi1, tile_roi2,
-            H_fullres, x0, y0, tile_size,
-            scales, feature_extractors,
-            n_neighbors, error_threshold, min_matches,
-            clahe_params, channel_label="merged"
-        )
+    out = detect_features_in_pair(
+        tile_roi1, tile_roi2,
+        H_fullres, x0, y0, tile_size,
+        scales, feature_extractors,
+        n_neighbors, error_threshold, min_matches,
+        clahe_params, channel_label="merged"
     )
+    for i in out:
+        i['tile_size'] = tile_size
+    all_matches.extend(out)
 
     # --- Per-channel ROI ---
     for i, (ch1, ch2) in enumerate(zip(img1_chs, img2_chs), start=1):
