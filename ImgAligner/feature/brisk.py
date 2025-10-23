@@ -1,7 +1,11 @@
 import cv2
 import numpy as np
 
-def brisk_feature_matching(tile_roi1, tile_roi2, ratio_thresh=0.8, ransac_thresh=500.0, verbose=True):
+def brisk_feature_matching(tile_roi1, 
+                        tile_roi2, 
+                        ratio_thresh=0.8, 
+                        ransac_thresh=500.0, 
+                        verbose=True):
     """
     Perform BRISK feature detection and matching between two images, then filter matches by
     Lowe's ratio test and RANSAC to estimate homography.

@@ -216,20 +216,15 @@ def plot_overlay(tile_roi1, tile_roi2, pts=None, figsize=(10, 10),
     plt.title(title)
     plt.axis('off')
 
-    # # Plot points if provided
-    # if pts is not None:
-    #     plt.scatter(pts[:, 0], pts[:, 1], s=20, c='lime', marker='o', label='Reference points')
-    #     plt.legend(loc='upper right')
-
     return fig
 
 
-def plot_feature_by_setting(df):
+def plot_feature_by_setting(df, show=True):
     """
     Create barplots for number of features found per scale, channel, detector,
     CLAHE clipLimit, and CLAHE tileGridSize.
     """
-    group_cols = ["scale", "channel", "detector", "clahe_clipLimit", "clahe_tileGridSize"]
+    group_cols = ["scale", "channel", "detector", "clahe_clipLimit", "clahe_tileGridSize", "tile_size"]
     n_groups = len(group_cols)
     
     fig, axes = plt.subplots(1, n_groups, figsize=(5*n_groups, 5))
@@ -246,14 +241,17 @@ def plot_feature_by_setting(df):
         ax.tick_params(axis='x', rotation=45)
     
     plt.tight_layout()
-    plt.show()
+    if show:
+        plt.show()
+    return fig
 
-import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
 
-def plot_matches_scatter(df, image=None,  color_by="scale", title="Matches scatter plot",tag='global'):
+def plot_matches_scatter(df, 
+                        image=None,  
+                        color_by="scale", 
+                        title="Matches scatter plot",
+                        tag='global', 
+                        show=True):
     """
     Scatter plot of matched points in ROI coordinates.
 
@@ -262,7 +260,7 @@ def plot_matches_scatter(df, image=None,  color_by="scale", title="Matches scatt
     - color_by: column name in df to color points by (e.g., "scale", "detector", "channel")
     - title: plot title
     """
-    plt.figure(figsize=(10, 8))
+    fig = plt.figure(figsize=(10, 8))
     if image is not None:
         plt.imshow(image,cmap='Greys')
 
@@ -283,7 +281,9 @@ def plot_matches_scatter(df, image=None,  color_by="scale", title="Matches scatt
     plt.ylabel("y1_"+tag)
     plt.title(title)
     plt.tight_layout()
-    plt.show()
+    if show:
+        plt.show()
+    return fig
 
 
 def plot_matches_vectors(df,image=None, title="Matches vectors colored by angle",color='angle',cmap='hsv',tag='roi'):
