@@ -66,8 +66,8 @@ def extract_matches_over_image(
     h, w = img1_enh.shape[:2]
     all_matches = []
 
-    print(f"Tiling image of size {w}x{h} with tile size {tile_size} and stride {stride}...")
     for tile_size in tile_sizes:
+        print(f"Tiling image of size {w}x{h} with tile size {tile_size} and stride {stride}...")
         if stride is None or stride>tile_size:
             print(f"Stride is None or greater than tile size, setting stride to {tile_size // 2}")
             stride = tile_size // 2
@@ -223,7 +223,9 @@ def detect_features_in_pair(
 
 
 def get_global_matches_for_tile(
-    x0, y0, tile_size,
+    x0, 
+    y0, 
+    tile_size,
     img1_enh, img2_enh,
     img1_chs, img2_chs,
     H_fullres,
@@ -235,6 +237,11 @@ def get_global_matches_for_tile(
     clahe_params=None
 ):
     """
+    Args:
+    x0: int
+    y0: int
+    tile_size: int
+    
     Extract consistent matches for a tile using per-tile CLAHE, multi-scale feature extraction,
     and configurable feature extractors.
 
@@ -289,15 +296,17 @@ def get_global_matches_for_tile(
         roi2_ch = apply_clahe_to_img(roi2_ch)
 
         
-        all_matches.extend(
-            detect_features_in_pair(
+        
+        out = detect_features_in_pair(
                 roi1_ch, roi2_ch,
                 H_fullres, x0, y0, tile_size,
                 scales, feature_extractors,
                 n_neighbors, error_threshold, min_matches,
                 clahe_params, channel_label=f"ch{i}"
             )
-        )
+        for i in out:
+            i['tile_size'] = tile_size
+        all_matches.extend(out)
 
     return all_matches,tile_roi1,tile_roi2
 
